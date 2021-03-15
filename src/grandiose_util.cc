@@ -22,6 +22,7 @@
 #include <Processing.NDI.Lib.h>
 #include "grandiose_util.h"
 #include "node_api.h"
+using namespace std;
 
 // Implementation of itoa()
 char* custom_itoa(int num, char* str, int base)
@@ -60,7 +61,7 @@ char* custom_itoa(int num, char* str, int base)
   str[i] = '\0'; // Append string terminator
 
   // Reverse the string
-  reverse(str, i);
+  std::reverse(str, i);
 
   return str;
 }
