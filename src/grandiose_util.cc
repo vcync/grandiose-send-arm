@@ -22,6 +22,48 @@
 #include "grandiose_util.h"
 #include "node_api.h"
 
+// Implementation of itoa()
+char* custom_itoa(int num, char* str, int base)
+{
+  int i = 0;
+  bool isNegative = false;
+
+  /* Handle 0 explicitely, otherwise empty string is printed for 0 */
+  if (num == 0)
+  {
+    str[i++] = '0';
+    str[i] = '\0';
+    return str;
+  }
+
+  // In standard itoa(), negative numbers are handled only with
+  // base 10. Otherwise numbers are considered unsigned.
+  if (num < 0 && base == 10)
+  {
+    isNegative = true;
+    num = -num;
+  }
+
+  // Process individual digits
+  while (num != 0)
+  {
+    int rem = num % base;
+    str[i++] = (rem > 9)? (rem-10) + 'a' : rem + '0';
+    num = num/base;
+  }
+
+  // If number is negative, append '-'
+  if (isNegative)
+    str[i++] = '-';
+
+  str[i] = '\0'; // Append string terminator
+
+  // Reverse the string
+  reverse(str, i);
+
+  return str;
+}
+
 napi_status checkStatus(napi_env env, napi_status status,
   const char* file, uint32_t line) {
 
@@ -45,7 +87,7 @@ napi_status checkStatus(napi_env env, napi_status status,
 
   char errorCode[20];
   throwStatus = napi_throw_error(env,
-    itoa(errorInfo->error_code, errorCode, 10), errorInfo->error_message);
+    custom_itoa(errorInfo->error_code, errorCode, 10), errorInfo->error_message);
   assert(throwStatus == napi_ok);
 
   return napi_pending_exception; // Expect to be cast to void
@@ -131,7 +173,7 @@ int32_t rejectStatus(napi_env env, carrier* c, char* file, int32_t line) {
     }
     char* extMsg = (char *) malloc(sizeof(char) * c->errorMsg.length() + 200);
     sprintf(extMsg, "In file %s on line %i, found error: %s", file, line, c->errorMsg.c_str());
-    status = napi_create_string_utf8(env, itoa(c->status, errorChars, 10),
+    status = napi_create_string_utf8(env, custom_itoa(c->status, errorChars, 10),
       NAPI_AUTO_LENGTH, &errorCode);
     FLOATING_STATUS;
     status = napi_create_string_utf8(env, extMsg, NAPI_AUTO_LENGTH, &errorMsg);
