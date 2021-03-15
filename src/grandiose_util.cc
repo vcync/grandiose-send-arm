@@ -60,7 +60,7 @@ char* custom_itoa(int num, char* str, int base)
   str[i] = '\0'; // Append string terminator
 
   // Reverse the string
-  std::reverse(str, i);
+  reverse(str, i);
 
   return str;
 }
