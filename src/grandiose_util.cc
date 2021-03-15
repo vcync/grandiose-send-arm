@@ -18,6 +18,7 @@
 #include <stdlib.h>
 #include <chrono>
 #include <string>
+#include <algorithm>
 #include <Processing.NDI.Lib.h>
 #include "grandiose_util.h"
 #include "node_api.h"
@@ -59,7 +60,7 @@ char* custom_itoa(int num, char* str, int base)
   str[i] = '\0'; // Append string terminator
 
   // Reverse the string
-  reverse(str, i);
+  std::reverse(str, i);
 
   return str;
 }
