@@ -14,7 +14,21 @@
       ],
       "include_dirs": [ "ndi/include" ],
       "conditions":[
-        ["OS=='win'", {
+        ["OS == 'win' and target_arch == 'ia32'", {
+          "copies":[
+            {
+              "destination": "build/Release",
+              "files": [
+                "ndi/lib/win-x86/Processing.NDI.Lib.x86.dll"
+              ]
+            }
+          ],
+          "link_settings": {
+            "libraries": [ "Processing.NDI.Lib.x86.lib" ],
+            "library_dirs": [ "ndi/lib/win-x86" ]
+          },
+        }],
+        ["OS == 'win' and target_arch == 'x64'", {
           "copies":[
             {
               "destination": "build/Release",
@@ -28,12 +42,17 @@
             "library_dirs": [ "ndi/lib/win-x64" ]
           },
         }],
-        ["OS=='linux'", {
+        ["OS == 'linux' and target_arch == 'ia32'", {
+          'link_settings': {
+              'libraries': [ "-L<(ndi_dir)/lib/lnx-x86", "-Wl,-rpath,<(ndi_dir)/lib/lnx-x86", "-lndi" ],
+          }
+        }],
+        ["OS == 'linux' and target_arch == 'x64'", {
           'link_settings': {
               'libraries': [ "-L<(ndi_dir)/lib/lnx-x64", "-Wl,-rpath,<(ndi_dir)/lib/lnx-x64", "-lndi" ],
           }
         }],
-        ["OS=='mac'", {
+        ["OS == 'mac' and target_arch == 'x64'", {
           'link_settings': {
               'libraries': [ "-L<(ndi_dir)/lib/mac-x64", "-Wl,-rpath,<(ndi_dir)/lib/mac-x64", "-lndi.4" ],
           }
