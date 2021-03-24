@@ -19,13 +19,13 @@
             {
               "destination": "build/Release",
               "files": [
-                "ndi/lib/win-x86/Processing.NDI.Lib.x86.dll"
+                "<(ndi_dir)/lib/win-x86/Processing.NDI.Lib.x86.dll"
               ]
             }
           ],
           "link_settings": {
             "libraries": [ "Processing.NDI.Lib.x86.lib" ],
-            "library_dirs": [ "ndi/lib/win-x86" ]
+            "library_dirs": [ "<(ndi_dir)/lib/win-x86" ]
           },
         }],
         ["OS == 'win' and target_arch == 'x64'", {
@@ -33,13 +33,13 @@
             {
               "destination": "build/Release",
               "files": [
-                "ndi/lib/win-x64/Processing.NDI.Lib.x64.dll"
+                "<(ndi_dir)/lib/win-x64/Processing.NDI.Lib.x64.dll"
               ]
             }
           ],
           "link_settings": {
             "libraries": [ "Processing.NDI.Lib.x64.lib" ],
-            "library_dirs": [ "ndi/lib/win-x64" ]
+            "library_dirs": [ "<(ndi_dir)/lib/win-x64" ]
           },
         }],
         ["OS == 'linux' and target_arch == 'ia32'", {
