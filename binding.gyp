@@ -35,17 +35,20 @@
             } ],
             [ "OS == 'linux' and target_arch == 'ia32'", {
                 "link_settings": {
-                    "libraries":    [ "-L<(ndi_dir)/lib/lnx-x86", "-Wl,-rpath,<(ndi_dir)/lib/lnx-x86", "-lndi" ]
+                    "libraries":    [ "-Wl,-rpath,<(ndi_dir)/lib/lnx-x86", "-lndi" ]
+                    "library_dirs": [ "<(ndi_dir)/lib/lnx-x86" ]
                 }
             } ],
             [ "OS == 'linux' and target_arch == 'x64'", {
                 "link_settings": {
-                    "libraries":    [ "-L<(ndi_dir)/lib/lnx-x64", "-Wl,-rpath,<(ndi_dir)/lib/lnx-x64", "-lndi" ]
+                    "libraries":    [ "-Wl,-rpath,<(ndi_dir)/lib/lnx-x64", "-lndi" ],
+                    "library_dirs": [ "<(ndi_dir)/lib/lnx-x64" ]
                 }
             } ],
             [ "OS == 'mac' and target_arch == 'x64'", {
                 "link_settings": {
-                  "libraries":      [ "-L<(ndi_dir)/lib/mac-x64", "-Wl,-rpath,<(ndi_dir)/lib/mac-x64", "-lndi.4" ]
+                    "libraries":    [ "-Wl,-rpath,<(ndi_dir)/lib/mac-x64", "-lndi.4" ]
+                    "library_dirs": [ "<(ndi_dir)/lib/max-x64" ]
                 }
             } ]
         ]
