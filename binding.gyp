@@ -36,6 +36,9 @@
               ]
             }
           ],
+          'link_settings': {
+              'libraries': [ "-Wl,-rpath,@loader_path", "-lndi" ],
+          }
         }],
         ["OS=='mac'", {
           "copies":[
@@ -43,9 +46,12 @@
               "destination": "build/Release",
               "files": [
                 "ndi/lib/mac-x64/libndi.4.dylib"
-              ]
+              ],
             }
           ],
+          'link_settings': {
+              'libraries': [ "-Wl,-rpath,@loader_path", "-lndi.4" ],
+          }
         }]
       ]
     }
