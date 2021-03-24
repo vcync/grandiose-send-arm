@@ -9,20 +9,20 @@
         "src/grandiose_receive.cc",
         "src/grandiose.cc"
       ],
-      "include_dirs": [ "include" ],
+      "include_dirs": [ "ndi/include" ],
       "conditions":[
         ["OS=='win'", {
           "copies":[
             {
               "destination": "build/Release",
               "files": [
-                "lib/win_x64/Processing.NDI.Lib.x64.dll"
+                "ndi/lib/win-x64/Processing.NDI.Lib.x64.dll"
               ]
             }
           ],
           "link_settings": {
             "libraries": [ "Processing.NDI.Lib.x64.lib" ],
-            "library_dirs": [ "lib/win_x64" ]
+            "library_dirs": [ "ndi/lib/win-x64" ]
           },
         }],
         ["OS=='linux'", {
@@ -30,9 +30,9 @@
             {
               "destination": "build/Release",
               "files": [
-                "lib/linux_x64/libndi.so",
-                "lib/linux_x64/libndi.so.4",
-                "lib/linux_x64/libndi.so.4.5.3",
+                "ndi/lib/lnx-x64/libndi.so",
+                "ndi/lib/lnx-x64/libndi.so.4",
+                "ndi/lib/lnx-x64/libndi.so.4.6.2",
               ]
             }
           ],
@@ -42,7 +42,7 @@
             {
               "destination": "build/Release",
               "files": [
-                "lib/mac_x64/libndi.4.dylib"
+                "ndi/lib/mac-x64/libndi.4.dylib"
               ]
             }
           ],
