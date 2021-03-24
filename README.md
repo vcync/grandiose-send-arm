@@ -7,6 +7,9 @@ This module will allow a Node.JS program to find, receive and send NDI(tm) video
 
 NDI(tm) is a realisation of a grand vision for what IP media streams should and can be, hence a steampunk themed name of _gra-NDI-ose_.
 
+Fork Information
+----------------
+
 This is [Dr. Ralf S. Engelschall](http://engelschall.com)'s indirect fork
 of the original [Streampunk Grandiose](https://github.com/Streampunk/grandiose) codebase.
 The differences against the original codebase are:
