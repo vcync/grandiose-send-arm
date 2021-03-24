@@ -37,7 +37,7 @@ const tmp       = require("tmp")
         console.log("-- extracting NDI SDK distribution")
         const dir2 = tmp.tmpNameSync()
         shell.mkdir("-p", dir2)
-        execa.sync(path.join(dir1, "innoextract.exe"), [ "-s", "-C", dir2, file2 ],
+        execa.sync(path.join(dir1, "innoextract.exe"), [ "-s", "-d", dir2, file2 ],
             { stdin: "inherit", stdout: "inherit", stderr: "inherit" })
 
         /*  assemble NDI SDK subset  */
