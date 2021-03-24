@@ -12,6 +12,7 @@ const tmp       = require("tmp")
 
 /*  establish asynchronous environment  */
 ;(async () => {
+    console.log("++ ad-hoc assembling NDK SDK distribution subset from original sources")
     if (os.platform() === "win32") {
         /*  download innoextract utility  */
         const url1 = "https://constexpr.org/innoextract/files/innoextract-1.9-windows.zip"
@@ -52,12 +53,41 @@ const tmp       = require("tmp")
         shell.cp(path.join(dir2, "app/Bin/x64/Processing.NDI.Lib.x64.dll"), "ndi/lib/win-x64/Processing.NDI.Lib.x64.dll")
 
         /*  remove temporary files  */
+        console.log("-- removing temporary files")
         shell.rm("-f", file1)
         shell.rm("-f", file2)
         shell.rm("-rf", dir1)
         shell.rm("-rf", dir2)
     }
     else if (os.platform() === "darwin") {
+        /*  download NDI SDK distribution  */
+        const url1 = "https://downloads.ndi.tv/SDK/NDI_SDK_Mac/InstallNDISDK_v4_Apple.pkg"
+        console.log("-- dowloading NDI SDK distribution")
+        const data1 = await got(url1, { responseType: "buffer" })
+        const file1 = tmp.tmpNameSync()
+        await fs.promises.writeFile(file1, data1.body, { encoding: null })
+
+        /*  extract NDI SDK distribution  */
+        console.log("-- extracting NDI SDK distribution")
+        const dir1 = tmp.tmpNameSync()
+        shell.rm("-rf", dir1)
+        execa.sync("pkgutil", [ "--expand", file1, dir1 ],
+            { stdin: "inherit", stdout: "inherit", stderr: "inherit" })
+        execa.sync("cpio", [ "-idmu", "-F", path.join(dir1, "NDI_SDK_Component.pkg/Payload") ],
+            { cwd: dir1, stdin: "inherit", stdout: "inherit", stderr: "inherit" })
+
+        /*  assemble NDI SDK subset  */
+        console.log("-- assembling NDI SDK subset")
+        shell.rm("-rf", "ndi")
+        shell.mkdir("-p", "ndi/include")
+        shell.mkdir("-p", "ndi/lib/mac-x64")
+        shell.mv(path.join(dir1, "NDI SDK for Apple/include/*.h"), "ndi/include/")
+        shell.mv(path.join(dir1, "NDI SDK for Apple/lib/x64/*.dylib"), "ndi/lib/mac-x64/")
+
+        /*  remove temporary files  */
+        console.log("-- removing temporary files")
+        shell.rm("-f", file1)
+        shell.rm("-rf", dir1)
     }
     else if (os.platform() === "linux") {
         /*  download NDI SDK distribution  */
@@ -87,6 +117,7 @@ const tmp       = require("tmp")
         shell.mv(path.join(dir1, "NDI SDK for Linux/lib/x86_64-linux-gnu/*"), "ndi/lib/lnx-x64/")
 
         /*  remove temporary files  */
+        console.log("-- removing temporary files")
         shell.rm("-f", file1)
         shell.rm("-rf", dir1)
     }
