@@ -23,6 +23,7 @@
         "segfault-handler": "^1.3.0"
     },
     "scripts": {
-        "install":          "node ndi.js && node-gyp rebuild"
+        "install":          "node ndi.js && node-gyp rebuild",
+        "test":             "node scratch/scratchVersion.js"
     }
 }
