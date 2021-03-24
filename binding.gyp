@@ -1,4 +1,7 @@
 {
+  "variables": {
+    "ndi_dir": "<(module_root_dir)/ndi"
+  },
   "targets": [
     {
       "target_name": "grandiose",
@@ -26,18 +29,8 @@
           },
         }],
         ["OS=='linux'", {
-          "copies":[
-            {
-              "destination": "build/Release",
-              "files": [
-                "ndi/lib/lnx-x64/libndi.so",
-                "ndi/lib/lnx-x64/libndi.so.4",
-                "ndi/lib/lnx-x64/libndi.so.4.6.2",
-              ]
-            }
-          ],
           'link_settings': {
-              'libraries': [ "-Wl,-rpath,@loader_path", "-lndi" ],
+              'libraries': [ "-L<(ndi_dir)/lib/lnx-x64", "-Wl,-rpath,<(ndi_dir)/lib/lnx-x64", "-lndi" ],
           }
         }],
         ["OS=='mac'", {
