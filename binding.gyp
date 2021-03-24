@@ -35,7 +35,7 @@
             } ],
             [ "OS == 'linux' and target_arch == 'ia32'", {
                 "link_settings": {
-                    "libraries":    [ "-Wl,-rpath,<(ndi_dir)/lib/lnx-x86", "-lndi" ]
+                    "libraries":    [ "-Wl,-rpath,<(ndi_dir)/lib/lnx-x86", "-lndi" ],
                     "library_dirs": [ "<(ndi_dir)/lib/lnx-x86" ]
                 }
             } ],
