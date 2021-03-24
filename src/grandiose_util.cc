@@ -60,7 +60,7 @@ char* custom_itoa(int num, char* str, int base)
   str[i] = '\0'; // Append string terminator
 
   // Reverse the string
-  std::reverse(str, i);
+  std::reverse(str, str+i);
 
   return str;
 }
@@ -132,7 +132,7 @@ napi_status checkArgs(napi_env env, napi_callback_info info, char* methodName,
   }
 
   napi_valuetype t;
-  for ( int x = 0 ; x < argc ; x++ ) {
+  for ( int x = 0 ; x < (int)argc ; x++ ) {
     status = napi_typeof(env, args[x], &t);
     if (status != napi_ok) return status;
     if (t != types[x]) {
@@ -161,7 +161,7 @@ void tidyCarrier(napi_env env, carrier* c) {
   delete c;
 }
 
-int32_t rejectStatus(napi_env env, carrier* c, char* file, int32_t line) {
+int32_t rejectStatus(napi_env env, carrier* c, const char* file, int32_t line) {
   if (c->status != GRANDIOSE_SUCCESS) {
     napi_value errorValue, errorCode, errorMsg;
     napi_status status;

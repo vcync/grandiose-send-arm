@@ -13,6 +13,7 @@
   limitations under the License.
 */
 
+#include <string>
 #include <Processing.NDI.Lib.h>
 
 #ifdef _WIN32
@@ -99,7 +100,8 @@ void sendComplete(napi_env env, napi_status asyncStatus, void* data) {
   // c->status = napi_set_named_property(env, result, "data", dataFn);
   // REJECT_STATUS;
 
-  napi_value name, groups, clockVideo, clockAudio;
+  // napi_value name, groups, clockVideo, clockAudio;
+  napi_value name, clockVideo, clockAudio;
   c->status = napi_create_string_utf8(env, c->name, NAPI_AUTO_LENGTH, &name);
   REJECT_STATUS;
   c->status = napi_set_named_property(env, result, "name", name);
@@ -149,7 +151,8 @@ napi_value send(napi_env env, napi_callback_info info) {
     GRANDIOSE_INVALID_ARGS);
 
   napi_value config = args[0];
-  napi_value name, groups, clockVideo, clockAudio;
+  // napi_value name, groups, clockVideo, clockAudio;
+  napi_value name, clockVideo, clockAudio;
 
   c->status = napi_get_named_property(env, config, "name", &name);
   REJECT_RETURN;
