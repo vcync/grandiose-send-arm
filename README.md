@@ -1,7 +1,7 @@
 # Grandiose
 [Node.js](http://nodejs.org/) native bindings to NewTek NDI(tm). For more information on NDI(tm), see:
 
-http://NDI.NewTek.com/
+https://www.ndi.tv/
 
 This module will allow a Node.JS program to find, receive and send NDI(tm) video, audio and metadata streams over IP networks. All calls a asynchronous and use Javascript promises with all of the underlying work of NDI running on separate threads from the event loop.
 
@@ -9,7 +9,7 @@ NDI(tm) is a realisation of a grand vision for what IP media streams should and 
 
 ## Installation
 
-Grandiose only supports Windows x64 platforms at this time. Future platforms may be added in the future.
+Grandiose supports the Windows/x86, Windows/x64, macOS/x64, Linux/x86 and Linux/x64 platforms at this time only.
 
 Install [Node.js](http://nodejs.org/) for your platform. This software has been developed against the long term stable (LTS) release.
 
