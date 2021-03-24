@@ -24,6 +24,18 @@ const COLOR_FORMAT_UYVY_BGRA = 1; // No alpha channel: UYVY, Alpha channel: BGRA
 const COLOR_FORMAT_RGBX_RGBA = 2; // No alpha channel: RGBX, Alpha channel: RGBA
 const COLOR_FORMAT_UYVY_RGBA = 3; // No alpha channel: UYVY, Alpha channel: RGBA
 
+const FOURCC_UYVY = 1498831189;
+const FOURCC_UYVA = 1096178005;
+const FOURCC_P216 = 909193808;
+const FOURCC_PA16 = 909197648;
+const FOURCC_YV12 = 842094169;
+const FOURCC_I420 = 808596553;
+const FOURCC_NV12 = 842094158;
+const FOURCC_BGRA = 1095911234;
+const FOURCC_BGRX = 1481787202;
+const FOURCC_RGBA = 1094862674;
+const FOURCC_RGBX = 1480738642;
+
 // On Windows there are some APIs that require bottom to top images in RGBA format. Specifying
 // this format will return images in this format. The image data pointer will still point to the
 // "top" of the image, althought he stride will be negative. You can get the "bottom" line of the image
@@ -72,6 +84,8 @@ module.exports = {
   COLOR_FORMAT_BGRX_BGRA, COLOR_FORMAT_UYVY_BGRA,
   COLOR_FORMAT_RGBX_RGBA, COLOR_FORMAT_UYVY_RGBA,
   COLOR_FORMAT_BGRX_BGRA_FLIPPED, COLOR_FORMAT_FASTEST,
+  FOURCC_UYVY, FOURCC_UYVA, FOURCC_P216, FOURCC_PA16, FOURCC_YV12,
+  FOURCC_I420, FOURCC_NV12, FOURCC_BGRA, FOURCC_BGRX, FOURCC_RGBA, FOURCC_RGBX,
   BANDWIDTH_METADATA_ONLY, BANDWIDTH_AUDIO_ONLY,
   BANDWIDTH_LOWEST, BANDWIDTH_HIGHEST,
   FORMAT_TYPE_PROGRESSIVE, FORMAT_TYPE_INTERLACED,
