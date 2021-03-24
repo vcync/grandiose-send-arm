@@ -30,7 +30,6 @@
 #include "grandiose_find.h"
 
 void finalizeReceive(napi_env env, void* data, void* hint) {
-  printf("Releasing receiver.\n");
   NDIlib_recv_destroy((NDIlib_recv_instance_t) data);
 }
 
@@ -55,8 +54,6 @@ void receiveExecute(napi_env env, void* data) {
 
 void receiveComplete(napi_env env, napi_status asyncStatus, void* data) {
   receiveCarrier* c = (receiveCarrier*) data;
-
-  printf("Completing some receive creation work.\n");
 
   if (asyncStatus != napi_ok) {
     c->status = asyncStatus;
@@ -293,19 +290,15 @@ void videoReceiveExecute(napi_env env, void* data) {
   switch (NDIlib_recv_capture_v2(c->recv, &c->videoFrame, nullptr, nullptr, c->wait))
   {
     case NDIlib_frame_type_none:
-      printf("No data received.\n");
       c->status = GRANDIOSE_NOT_FOUND;
       c->errorMsg = "No video data received in the requested time interval.";
       break;
 
     // Video data
     case NDIlib_frame_type_video:
-      /* printf("Video data %i received (%dx%d at %d/%d).\n", &c->videoFrame, c->videoFrame.xres, c->videoFrame.yres,
-        c->videoFrame.frame_rate_N, c->videoFrame.frame_rate_D); */
       break;
 
     default:
-      printf("Other kind of data received.\n");
       c->status = GRANDIOSE_NOT_VIDEO;
       c->errorMsg = "Non-video data received on video capture.";
       break;
@@ -471,12 +464,9 @@ napi_value videoReceive(napi_env env, napi_callback_info info) {
 void audioReceiveExecute(napi_env env, void* data) {
   dataCarrier* c = (dataCarrier*) data;
 
-  // printf("Audio receiver executing.\n");
-
   switch (NDIlib_recv_capture_v2(c->recv, nullptr, &c->audioFrame, nullptr, c->wait))
   {
     case NDIlib_frame_type_none:
-      printf("No data received.\n");
       c->status = GRANDIOSE_NOT_FOUND;
       c->errorMsg = "No audio data received in the requested time interval.";
       break;
@@ -500,7 +490,6 @@ void audioReceiveExecute(napi_env env, void* data) {
       break;
 
     default:
-      printf("Other kind of data received.\n");
       c->status = GRANDIOSE_NOT_AUDIO;
       c->errorMsg = "Non-audio data received on audio capture.";
       break;
@@ -509,8 +498,6 @@ void audioReceiveExecute(napi_env env, void* data) {
 
 void audioReceiveComplete(napi_env env, napi_status asyncStatus, void* data) {
   dataCarrier* c = (dataCarrier*) data;
-
-  // printf("Audio receiver completing - status %i.\n", c->status);
 
   if (asyncStatus != napi_ok) {
     c->status = asyncStatus;
@@ -579,7 +566,6 @@ void audioReceiveComplete(napi_env env, napi_status asyncStatus, void* data) {
   c->status = napi_set_named_property(env, result, "timestamp", param);
   REJECT_STATUS;
 
-  // printf("Timecode is %lld.\n", c->audioFrame.timecode);
   c->status = napi_create_int32(env, (int32_t) (c->audioFrame.timecode / 10000000), &params);
   REJECT_STATUS;
   c->status = napi_create_int32(env, (c->audioFrame.timecode % 10000000) * 100, &paramn);
@@ -725,12 +711,9 @@ napi_value audioReceive(napi_env env, napi_callback_info info) {
 void metadataReceiveExecute(napi_env env, void* data) {
   dataCarrier* c = (dataCarrier*) data;
 
-  // printf("Metadata receiver executing.\n");
-
   switch (NDIlib_recv_capture_v2(c->recv, nullptr, nullptr, &c->metadataFrame, c->wait))
   {
     case NDIlib_frame_type_none:
-      printf("No data received.\n");
       c->status = GRANDIOSE_NOT_FOUND;
       c->errorMsg = "No metadata received in the requested time interval.";
       break;
@@ -740,7 +723,6 @@ void metadataReceiveExecute(napi_env env, void* data) {
       break;
 
     default:
-      printf("Other kind of data received.\n");
       c->status = GRANDIOSE_NOT_AUDIO;
       c->errorMsg = "Non-metadata payload received on metadata capture.";
       break;
@@ -750,7 +732,6 @@ void metadataReceiveExecute(napi_env env, void* data) {
 
 void metadataReceiveComplete(napi_env env, napi_status asyncStatus, void* data) {
   dataCarrier* c = (dataCarrier*) data;
-  // printf("Metadata receiver completing - status %i.\n", c->status);
 
   if (asyncStatus != napi_ok) {
     c->status = asyncStatus;
@@ -847,7 +828,6 @@ napi_value metadataReceive(napi_env env, napi_callback_info info) {
 void dataReceiveExecute(napi_env env, void* data) {
   dataCarrier* c = (dataCarrier*) data;
 
-  // printf("Audio receiver executing.\n");
   c->frameType = NDIlib_recv_capture_v2(c->recv, &c->videoFrame, &c->audioFrame, &c->metadataFrame, c->wait);
   switch (c->frameType) {
 

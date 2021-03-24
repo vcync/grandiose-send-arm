@@ -73,7 +73,6 @@ napi_status checkStatus(napi_env env, napi_status status,
   const napi_extended_error_info *errorInfo;
 
   if (status == napi_ok) {
-    // printf("Received status OK.\n");
     return status;
   }
 

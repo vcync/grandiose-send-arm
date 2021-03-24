@@ -30,11 +30,8 @@
 void findExecute(napi_env env, void* data) {
   findCarrier* c = (findCarrier*) data;
 
-  printf("Wait is %u.\n", c->wait);
-
   bool findStatus = NDIlib_find_wait_for_sources(c->find, c->wait);
   findStatus = NDIlib_find_wait_for_sources(c->find, c->wait);
-  printf("Find status is %i.\n", findStatus);
 
   c->sources = NDIlib_find_get_current_sources(c->find, &c->no_sources);
   if (!findStatus) {
@@ -218,10 +215,3 @@ napi_status makeNativeSource(napi_env env, napi_value source, NDIlib_source_t *r
   return napi_ok;
 }
 
-/* makeNativeSource usage example
-NDIlib_source_t* fred = new NDIlib_source_t();
-c->status = makeNativeSource(env, item, fred);
-REJECT_STATUS;
-printf("I made name=%s and urlAddress=%s\n", fred->p_ndi_name, fred->p_url_address);
-delete fred;
-*/

@@ -47,14 +47,11 @@ void sendExecute(napi_env env, void* data) {
 }
 
 void finalizeSend(napi_env env, void* data, void* hint) {
-  printf("Releasing sender.\n");
   NDIlib_send_destroy((NDIlib_send_instance_t) data);
 }
 
 void sendComplete(napi_env env, napi_status asyncStatus, void* data) {
   sendCarrier* c = (sendCarrier*) data;
-
-  printf("Completing some send creation work.\n");
 
   if (asyncStatus != napi_ok) {
     c->status = asyncStatus;
