@@ -7,6 +7,15 @@ This module will allow a Node.JS program to find, receive and send NDI(tm) video
 
 NDI(tm) is a realisation of a grand vision for what IP media streams should and can be, hence a steampunk themed name of _gra-NDI-ose_.
 
+This is [Dr. Ralf S. Engelschall](http://engelschall.com)'s indirect fork
+of the original [Streampunk Grandiose](https://github.com/Streampunk/grandiose) codebase.
+The differences against the original codebase are:
+
+- TypeScript type definitions from the [ianshade/grandiose][https://github.com/ianshade/grandiose] fork.
+- NDI Sender functionality from the [danjenkins/grandiose][https://github.com/danjenkins/grandiose] fork.
+- ad-hoc download of NDI SDK 4.6.2 from the [rse/grandiose][https://github.com/rse/grandiose] fork.
+- source adjustments for clean compile under Windows, macOS and Linux from the [rse/grandiose][https://github.com/rse/grandiose] fork.
+
 ## Installation
 
 Grandiose supports the Windows/x86, Windows/x64, macOS/x64, Linux/x86 and Linux/x64 platforms at this time only.
