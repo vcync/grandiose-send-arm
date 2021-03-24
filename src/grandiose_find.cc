@@ -13,6 +13,7 @@
   limitations under the License.
 */
 
+#include <string>
 #include <Processing.NDI.Lib.h>
 
 #ifdef _WIN32

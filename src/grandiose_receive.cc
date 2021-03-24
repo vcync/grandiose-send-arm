@@ -631,7 +631,7 @@ void audioReceiveComplete(napi_env env, napi_status asyncStatus, void* data) {
 }
 
 napi_value dataAndAudioReceive(napi_env env, napi_callback_info info,
-    char* resourceName, napi_async_execute_callback execute,
+    const char* resourceName, napi_async_execute_callback execute,
     napi_async_complete_callback complete) {
   napi_valuetype type;
   dataCarrier* c = new dataCarrier;
@@ -899,6 +899,7 @@ void dataReceiveComplete(napi_env env, napi_status asyncStatus, void* data) {
       c->errorMsg = "Received error response from NDI data request. Connection lost.";
       c->status = GRANDIOSE_CONNECTION_LOST;
       REJECT_STATUS;
+      break;
     case NDIlib_frame_type_status_change:
       napi_value result, param;
       c->status = napi_create_object(env, &result);
@@ -913,6 +914,9 @@ void dataReceiveComplete(napi_env env, napi_status asyncStatus, void* data) {
       FLOATING_STATUS;
 
       tidyCarrier(env, c);
+      break;
+    case NDIlib_frame_type_none:
+    case NDIlib_frame_type_max:
       break;
   }
 }

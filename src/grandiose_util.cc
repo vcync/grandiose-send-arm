@@ -66,6 +66,48 @@ char* custom_itoa(int num, char* str, int base)
   return str;
 }
 
+// Implementation of itoa()
+char* custom_itoa(int num, char* str, int base)
+{
+  int i = 0;
+  bool isNegative = false;
+
+  /* Handle 0 explicitely, otherwise empty string is printed for 0 */
+  if (num == 0)
+  {
+    str[i++] = '0';
+    str[i] = '\0';
+    return str;
+  }
+
+  // In standard itoa(), negative numbers are handled only with
+  // base 10. Otherwise numbers are considered unsigned.
+  if (num < 0 && base == 10)
+  {
+    isNegative = true;
+    num = -num;
+  }
+
+  // Process individual digits
+  while (num != 0)
+  {
+    int rem = num % base;
+    str[i++] = (rem > 9)? (rem-10) + 'a' : rem + '0';
+    num = num/base;
+  }
+
+  // If number is negative, append '-'
+  if (isNegative)
+    str[i++] = '-';
+
+  str[i] = '\0'; // Append string terminator
+
+  // Reverse the string
+  std::reverse(std::string(str).begin(), std::string(str).end());
+
+  return str;
+}
+
 napi_status checkStatus(napi_env env, napi_status status,
   const char* file, uint32_t line) {
 
@@ -133,7 +175,7 @@ napi_status checkArgs(napi_env env, napi_callback_info info, char* methodName,
   }
 
   napi_valuetype t;
-  for ( int x = 0 ; x < argc ; x++ ) {
+  for ( int x = 0 ; x < (int)argc ; x++ ) {
     status = napi_typeof(env, args[x], &t);
     if (status != napi_ok) return status;
     if (t != types[x]) {
@@ -162,7 +204,7 @@ void tidyCarrier(napi_env env, carrier* c) {
   delete c;
 }
 
-int32_t rejectStatus(napi_env env, carrier* c, char* file, int32_t line) {
+int32_t rejectStatus(napi_env env, carrier* c, const char* file, int32_t line) {
   if (c->status != GRANDIOSE_SUCCESS) {
     napi_value errorValue, errorCode, errorMsg;
     napi_status status;
