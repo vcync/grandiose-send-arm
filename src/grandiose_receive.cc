@@ -899,6 +899,7 @@ void dataReceiveComplete(napi_env env, napi_status asyncStatus, void* data) {
       c->errorMsg = "Received error response from NDI data request. Connection lost.";
       c->status = GRANDIOSE_CONNECTION_LOST;
       REJECT_STATUS;
+      break;
     case NDIlib_frame_type_status_change:
       napi_value result, param;
       c->status = napi_create_object(env, &result);
