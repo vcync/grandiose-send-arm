@@ -47,7 +47,7 @@
             } ],
             [ "OS == 'mac' and target_arch == 'x64'", {
                 "link_settings": {
-                    "libraries":    [ "-Wl,-rpath,<(ndi_dir)/lib/mac-x64", "-lndi.4" ]
+                    "libraries":    [ "-Wl,-rpath,<(ndi_dir)/lib/mac-x64", "-lndi.4" ],
                     "library_dirs": [ "<(ndi_dir)/lib/max-x64" ]
                 }
             } ]
