@@ -74,7 +74,7 @@ const tmp       = require("tmp")
         execa.sync("pkgutil", [ "--expand", file1, dir1 ],
             { stdin: "inherit", stdout: "inherit", stderr: "inherit" })
         execa.sync("cpio", [ "-idmu", "-F", path.join(dir1, "NDI_SDK_Component.pkg/Payload") ],
-            { cwd: dir1, stdin: "inherit", stdout: "inherit", stderr: "inherit" })
+            { cwd: dir1, stdin: "inherit", stdout: "ignore", stderr: "ignore" })
 
         /*  assemble NDI SDK subset  */
         console.log("-- assembling NDI SDK subset")
