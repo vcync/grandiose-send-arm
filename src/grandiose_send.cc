@@ -156,7 +156,7 @@ napi_value send(napi_env env, napi_callback_info info) {
   c->status = napi_typeof(env, name, &type);
   REJECT_RETURN;
   if (type != napi_string) REJECT_ERROR_RETURN(
-    "Name property must be of type string.",
+    "name property must be of type string.",
     GRANDIOSE_INVALID_ARGS);
   size_t namel;
   c->status = napi_get_value_string_utf8(env, name, nullptr, 0, &namel);
@@ -180,7 +180,7 @@ napi_value send(napi_env env, napi_callback_info info) {
   REJECT_RETURN;
   if (type != napi_undefined) {
     if (type != napi_boolean) REJECT_ERROR_RETURN(
-      "ClockVideo property must be of type boolean.",
+      "clockVideo property must be of type boolean.",
       GRANDIOSE_INVALID_ARGS);
     c->status = napi_get_value_bool(env, clockVideo, &c->clockVideo);
     REJECT_RETURN;
@@ -192,7 +192,7 @@ napi_value send(napi_env env, napi_callback_info info) {
   REJECT_RETURN;
   if (type != napi_undefined) {
     if (type != napi_boolean) REJECT_ERROR_RETURN(
-      "ClockAudio property must be of type boolean.",
+      "clockAudio property must be of type boolean.",
       GRANDIOSE_INVALID_ARGS);
     c->status = napi_get_value_bool(env, clockAudio, &c->clockAudio);
     REJECT_RETURN;
@@ -283,7 +283,7 @@ napi_value videoSend(napi_env env, napi_callback_info info) {
     c->status = napi_typeof(env, param, &type);
     REJECT_RETURN;
     if (type != napi_number) REJECT_ERROR_RETURN(
-      "yres value must be a number",
+      "xres value must be a number",
       GRANDIOSE_INVALID_ARGS);
     c->status = napi_get_value_int32(env, param, &c->videoFrame.xres);
     REJECT_RETURN;
