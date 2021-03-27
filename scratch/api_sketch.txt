@@ -127,3 +127,6 @@ await sender.send({
   type: 'metadata',
   ...
 });
+
+sender.destroy();
+

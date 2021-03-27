@@ -46,8 +46,76 @@ void sendExecute(napi_env env, void* data) {
   }
 }
 
+/*  implicit destruction of NDI sender via garbage collection  */
 void finalizeSend(napi_env env, void* data, void* hint) {
-  NDIlib_send_destroy((NDIlib_send_instance_t) data);
+    /*  fetch NDI sender wrapper object  */
+    napi_value obj = (napi_value)hint;
+
+    /*  fetch NDI sender external object  */
+    napi_value sendValue;
+    if (napi_get_named_property(env, obj, "embedded", &sendValue) != napi_ok)
+        return;
+
+    /*  ensure it was still not manually destroyed  */
+    napi_valuetype result;
+    if (napi_typeof(env, sendValue, &result) != napi_ok)
+        return;
+    if (result != napi_external)
+        return;
+
+    /*  fetch NDI sender native object  */
+    void *sendData;
+    if (napi_get_value_external(env, sendValue, &sendData) != napi_ok)
+        return;
+    NDIlib_send_instance_t send = (NDIlib_send_instance_t)sendData;
+
+    /*  call the NDI API  */
+    NDIlib_send_destroy(send);
+}
+
+/*  explicit destruction of NDI sender via "destroy" method  */
+napi_value destroySend(napi_env env, napi_callback_info info) {
+    /*  create a new Promise carrier object  */
+    carrier *c = new carrier;
+    napi_value promise;
+    c->status = napi_create_promise(env, &c->_deferred, &promise);
+    REJECT_RETURN;
+
+    /*  fetch the NDI sender wrapper object ("this" of the "destroy" method)  */
+    size_t argc = 1;
+    napi_value args[1];
+    napi_value thisValue;
+    c->status = napi_get_cb_info(env, info, &argc, args, &thisValue, nullptr);
+    REJECT_RETURN;
+
+    /*  fetch NDI sender external object  */
+    napi_value sendValue;
+    c->status = napi_get_named_property(env, thisValue, "embedded", &sendValue);
+    REJECT_RETURN;
+
+    /*  ensure it was still not manually destroyed  */
+    napi_valuetype result;
+    if (napi_typeof(env, sendValue, &result) != napi_ok)
+        NAPI_THROW_ERROR("NDI sender already destroyed");
+    if (result == napi_external) {
+        /*  fetch NDI sender native object  */
+        void *sendData;
+        c->status = napi_get_value_external(env, sendValue, &sendData);
+        REJECT_RETURN;
+        NDIlib_send_instance_t send = (NDIlib_send_instance_t)sendData;
+
+        /*  call the NDI API  */
+        NDIlib_send_destroy(send);
+
+        /*  overwrite the "embedded" field with a non-external value
+            (to ensure that the "finalizeSend" will no longer do anything
+            once the garbage collection fires)  */
+        napi_value value;
+        napi_create_int32(env, 0, &value);
+        c->status = napi_set_named_property(env, thisValue, "embedded", value);
+        REJECT_RETURN;
+    }
+    return promise;
 }
 
 void sendComplete(napi_env env, napi_status asyncStatus, void* data) {
@@ -64,9 +132,16 @@ void sendComplete(napi_env env, napi_status asyncStatus, void* data) {
   REJECT_STATUS;
 
   napi_value embedded;
-  c->status = napi_create_external(env, c->send, finalizeSend, nullptr, &embedded);
+  c->status = napi_create_external(env, c->send, finalizeSend, result, &embedded);
   REJECT_STATUS;
   c->status = napi_set_named_property(env, result, "embedded", embedded);
+  REJECT_STATUS;
+
+  napi_value destroyFn;
+  c->status = napi_create_function(env, "destroy", NAPI_AUTO_LENGTH, destroySend,
+    nullptr, &destroyFn);
+  REJECT_STATUS;
+  c->status = napi_set_named_property(env, result, "destroy", destroyFn);
   REJECT_STATUS;
 
   napi_value videoFn;
@@ -156,7 +231,7 @@ napi_value send(napi_env env, napi_callback_info info) {
   c->status = napi_typeof(env, name, &type);
   REJECT_RETURN;
   if (type != napi_string) REJECT_ERROR_RETURN(
-    "name property must be of type string.",
+    "Name property must be of type string.",
     GRANDIOSE_INVALID_ARGS);
   size_t namel;
   c->status = napi_get_value_string_utf8(env, name, nullptr, 0, &namel);
@@ -180,7 +255,7 @@ napi_value send(napi_env env, napi_callback_info info) {
   REJECT_RETURN;
   if (type != napi_undefined) {
     if (type != napi_boolean) REJECT_ERROR_RETURN(
-      "clockVideo property must be of type boolean.",
+      "ClockVideo property must be of type boolean.",
       GRANDIOSE_INVALID_ARGS);
     c->status = napi_get_value_bool(env, clockVideo, &c->clockVideo);
     REJECT_RETURN;
@@ -192,7 +267,7 @@ napi_value send(napi_env env, napi_callback_info info) {
   REJECT_RETURN;
   if (type != napi_undefined) {
     if (type != napi_boolean) REJECT_ERROR_RETURN(
-      "clockAudio property must be of type boolean.",
+      "ClockAudio property must be of type boolean.",
       GRANDIOSE_INVALID_ARGS);
     c->status = napi_get_value_bool(env, clockAudio, &c->clockAudio);
     REJECT_RETURN;
@@ -283,7 +358,7 @@ napi_value videoSend(napi_env env, napi_callback_info info) {
     c->status = napi_typeof(env, param, &type);
     REJECT_RETURN;
     if (type != napi_number) REJECT_ERROR_RETURN(
-      "xres value must be a number",
+      "yres value must be a number",
       GRANDIOSE_INVALID_ARGS);
     c->status = napi_get_value_int32(env, param, &c->videoFrame.xres);
     REJECT_RETURN;

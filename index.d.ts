@@ -43,6 +43,7 @@ export interface Receiver {
 
 export interface Sender {
   embedded: unknown
+  destroy: () => Promise<void>
   video: (frame: VideoFrame) => Promise<void>
   audio: (frame: AudioFrame) => Promise<void>
   name: string
