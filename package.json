@@ -25,6 +25,7 @@
     },
     "scripts": {
         "install":          "node ndi.js && node-gyp rebuild",
+        "build":            "node-gyp rebuild",
         "test":             "node scratch/scratchVersion.js",
         "clean":            "shx rm -rf ndi build"
     }
