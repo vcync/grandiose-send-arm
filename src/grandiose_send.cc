@@ -115,6 +115,11 @@ napi_value destroySend(napi_env env, napi_callback_info info) {
         c->status = napi_set_named_property(env, thisValue, "embedded", value);
         REJECT_RETURN;
     }
+
+    napi_value undefined;
+    napi_get_undefined(env, &undefined);
+    napi_resolve_deferred(env, c->_deferred, undefined);
+
     return promise;
 }
 
