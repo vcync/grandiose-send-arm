@@ -14,6 +14,7 @@ This is [Dr. Ralf S. Engelschall](http://engelschall.com)'s indirect fork
 of the original [Streampunk Grandiose](https://github.com/Streampunk/grandiose) codebase.
 The differences against the original codebase are:
 
+- audio frame sending support from the [rse/grandiose](https://github.com/rse/grandiose) fork.
 - ad-hoc download of NDI SDK 4.6.2 from the [rse/grandiose](https://github.com/rse/grandiose) fork.
 - portability fixes for clean compile under Windows, macOS and Linux from the [rse/grandiose](https://github.com/rse/grandiose) fork.
 - portability fixes for macOS from the [danjenkins/grandiose](https://github.com/danjenkins/grandiose) fork.
