@@ -28,6 +28,7 @@
 #include "grandiose_util.h"
 
 napi_value videoSend(napi_env env, napi_callback_info info);
+napi_value audioSend(napi_env env, napi_callback_info info);
 
 void sendExecute(napi_env env, void* data) {
   sendCarrier* c = (sendCarrier *) data;
@@ -156,12 +157,12 @@ void sendComplete(napi_env env, napi_status asyncStatus, void* data) {
   c->status = napi_set_named_property(env, result, "video", videoFn);
   REJECT_STATUS;
 
-  // napi_value audioFn;
-  // c->status = napi_create_function(env, "audio", NAPI_AUTO_LENGTH, audioSend,
-  //   nullptr, &audioFn);
-  // REJECT_STATUS;
-  // c->status = napi_set_named_property(env, result, "audio", audioFn);
-  // REJECT_STATUS;
+  napi_value audioFn;
+  c->status = napi_create_function(env, "audio", NAPI_AUTO_LENGTH, audioSend,
+    nullptr, &audioFn);
+  REJECT_STATUS;
+  c->status = napi_set_named_property(env, result, "audio", audioFn);
+  REJECT_STATUS;
 
   // napi_value metadataFn;
   // c->status = napi_create_function(env, "metadata", NAPI_AUTO_LENGTH, metadataReceive,
@@ -482,3 +483,148 @@ napi_value videoSend(napi_env env, napi_callback_info info) {
 
   return promise;
 }
+
+void audioSendExecute(napi_env env, void* data) {
+  sendDataCarrier* c = (sendDataCarrier*) data;
+
+  NDIlib_send_send_audio_v2(c->send, &c->audioFrame);
+}
+
+void audioSendComplete(napi_env env, napi_status asyncStatus, void* data) {
+  sendDataCarrier* c = (sendDataCarrier*) data;
+  napi_value result;
+  napi_status status;
+
+  c->status = napi_delete_reference(env, c->sourceBufferRef);
+  REJECT_STATUS;
+
+  if (asyncStatus != napi_ok) {
+    c->status = asyncStatus;
+    c->errorMsg = "Async audio frame send failed to complete.";
+  }
+  REJECT_STATUS;
+
+  c->status = napi_create_object(env, &result);
+  REJECT_STATUS;
+  status = napi_resolve_deferred(env, c->_deferred, result);
+  FLOATING_STATUS;
+
+  tidyCarrier(env, c);
+}
+
+napi_value audioSend(napi_env env, napi_callback_info info) {
+  napi_valuetype type;
+  sendDataCarrier* c = new sendDataCarrier;
+
+  napi_value promise;
+  c->status = napi_create_promise(env, &c->_deferred, &promise);
+  REJECT_RETURN;
+
+  size_t argc = 1;
+  napi_value args[1];
+  napi_value thisValue;
+  c->status = napi_get_cb_info(env, info, &argc, args, &thisValue, nullptr);
+  REJECT_RETURN;
+
+  napi_value sendValue;
+  c->status = napi_get_named_property(env, thisValue, "embedded", &sendValue);
+  REJECT_RETURN;
+  void* sendData;
+  c->status = napi_get_value_external(env, sendValue, &sendData);
+  c->send = (NDIlib_send_instance_t) sendData;
+  REJECT_RETURN;
+
+  if (argc >= 1) {
+    napi_value config;
+    config = args[0];
+    c->status = napi_typeof(env, config, &type);
+    REJECT_RETURN;
+    if (type != napi_object) REJECT_ERROR_RETURN(
+      "frame must be an object",
+      GRANDIOSE_INVALID_ARGS);
+
+    bool isArray, isBuffer;
+    c->status = napi_is_array(env, config, &isArray);
+    REJECT_RETURN;
+    if (isArray) REJECT_ERROR_RETURN(
+      "Argument to audio send cannot be an array.",
+      GRANDIOSE_INVALID_ARGS);
+
+    napi_value param;
+    c->status = napi_get_named_property(env, config, "sampleRate", &param);
+    REJECT_RETURN;
+    c->status = napi_typeof(env, param, &type);
+    REJECT_RETURN;
+    if (type != napi_number) REJECT_ERROR_RETURN(
+      "sampleRate value must be a number",
+      GRANDIOSE_INVALID_ARGS);
+    c->status = napi_get_value_int32(env, param, &c->audioFrame.sample_rate);
+    REJECT_RETURN;
+
+    c->status = napi_get_named_property(env, config, "noChannels", &param);
+    REJECT_RETURN;
+    c->status = napi_typeof(env, param, &type);
+    REJECT_RETURN;
+    if (type != napi_number) REJECT_ERROR_RETURN(
+      "noChannels value must be a number",
+      GRANDIOSE_INVALID_ARGS);
+    c->status = napi_get_value_int32(env, param, &c->audioFrame.no_channels);
+    REJECT_RETURN;
+
+    c->status = napi_get_named_property(env, config, "noSamples", &param);
+    REJECT_RETURN;
+    c->status = napi_typeof(env, param, &type);
+    REJECT_RETURN;
+    if (type != napi_number) REJECT_ERROR_RETURN(
+      "Samples value must be a number",
+      GRANDIOSE_INVALID_ARGS);
+    c->status = napi_get_value_int32(env, param, &c->audioFrame.no_samples);
+    REJECT_RETURN;
+
+    // TODO: timecode
+    // TODO: timestamp
+    c->audioFrame.timecode = NDIlib_send_timecode_synthesize;
+    c->audioFrame.timestamp = 0;
+
+    c->status = napi_get_named_property(env, config, "channelStrideBytes", &param);
+    REJECT_RETURN;
+    c->status = napi_typeof(env, param, &type);
+    REJECT_RETURN;
+    if (type != napi_number) REJECT_ERROR_RETURN(
+      "channelStrideBytes value must be a number",
+      GRANDIOSE_INVALID_ARGS);
+    c->status = napi_get_value_int32(env, param, &c->audioFrame.channel_stride_in_bytes);
+    REJECT_RETURN;
+
+    napi_value audioBuffer;
+    c->status = napi_get_named_property(env, config, "data", &audioBuffer);
+    REJECT_RETURN;
+    c->status = napi_is_buffer(env, audioBuffer, &isBuffer);
+    REJECT_RETURN;
+    if (!isBuffer) REJECT_ERROR_RETURN(
+      "data must be provided as a Node Buffer",
+      GRANDIOSE_INVALID_ARGS);
+    void * data;
+    size_t length;
+    c->status = napi_get_buffer_info(env, audioBuffer, &data, &length);
+    REJECT_RETURN;
+    c->audioFrame.p_data = (float *) data;
+    c->status = napi_create_reference(env, audioBuffer, 1, &c->sourceBufferRef);
+    REJECT_RETURN;
+
+  } else REJECT_ERROR_RETURN(
+      "frame not provided",
+    GRANDIOSE_INVALID_ARGS);
+
+  napi_value resource_name;
+  c->status = napi_create_string_utf8(env, "AudioSend", NAPI_AUTO_LENGTH, &resource_name);
+  REJECT_RETURN;
+  c->status = napi_create_async_work(env, NULL, resource_name, audioSendExecute,
+    audioSendComplete, c, &c->_request);
+  REJECT_RETURN;
+  c->status = napi_queue_async_work(env, c->_request);
+  REJECT_RETURN;
+
+  return promise;
+}
+
