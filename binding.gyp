@@ -34,20 +34,36 @@
                 }
             } ],
             [ "OS == 'linux' and target_arch == 'ia32'", {
+                "copies": [ {
+                    "destination":  "build/Release",
+                    "files":        [ "<(ndi_dir)/lib/lnx-x86/libndi.so",
+                                      "<(ndi_dir)/lib/lnx-x86/libndi.so.4",
+                                      "<(ndi_dir)/lib/lnx-x86/libndi.so.4.6.2" ]
+                } ],
                 "link_settings": {
-                    "libraries":    [ "-Wl,-rpath,<(ndi_dir)/lib/lnx-x86", "-lndi" ],
+                    "libraries":    [ "-Wl,-rpath,'$$ORIGIN'", "-lndi" ],
                     "library_dirs": [ "<(ndi_dir)/lib/lnx-x86" ]
                 }
             } ],
             [ "OS == 'linux' and target_arch == 'x64'", {
+                "copies": [ {
+                    "destination":  "build/Release",
+                    "files":        [ "<(ndi_dir)/lib/lnx-x64/libndi.so",
+                                      "<(ndi_dir)/lib/lnx-x64/libndi.so.4",
+                                      "<(ndi_dir)/lib/lnx-x64/libndi.so.4.6.2" ]
+                } ],
                 "link_settings": {
-                    "libraries":    [ "-Wl,-rpath,<(ndi_dir)/lib/lnx-x64", "-lndi" ],
+                    "libraries":    [ "-Wl,-rpath,'$$ORIGIN'", "-lndi" ],
                     "library_dirs": [ "<(ndi_dir)/lib/lnx-x64" ]
                 }
             } ],
             [ "OS == 'mac' and target_arch == 'x64'", {
+                "copies": [ {
+                    "destination":  "build/Release",
+                    "files":        [ "<(ndi_dir)/lib/mac-x64/libndi.4.dylib" ]
+                } ],
                 "link_settings": {
-                    "libraries":    [ "-Wl,-rpath,<(ndi_dir)/lib/mac-x64", "-lndi.4" ],
+                    "libraries":    [ "-Wl,-rpath,@loader_path", "-lndi.4" ],
                     "library_dirs": [ "<(ndi_dir)/lib/mac-x64" ]
                 }
             } ]
