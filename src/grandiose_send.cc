@@ -411,8 +411,28 @@ napi_value videoSend(napi_env env, napi_callback_info info) {
     REJECT_RETURN;
     c->videoFrame.picture_aspect_ratio = (float) pictureAspectRatio;
 
-    // TODO: timestamps
-    // TODO: timecode
+    c->videoFrame.timecode = NDIlib_send_timecode_synthesize;
+    c->status = napi_get_named_property(env, config, "timecode", &param);
+    REJECT_RETURN;
+    c->status = napi_typeof(env, param, &type);
+    REJECT_RETURN;
+    if (type != napi_undefined) {
+        if (type == napi_number) {
+            c->status = napi_get_value_int64(env, param, &c->videoFrame.timecode);
+            REJECT_RETURN;
+        }
+        else if (type == napi_bigint) {
+            bool lossless;
+            c->status = napi_get_value_bigint_int64(env, param, &c->videoFrame.timecode, &lossless);
+            REJECT_RETURN;
+        }
+        else
+            REJECT_ERROR_RETURN("timecode value must be a number or bigint", GRANDIOSE_INVALID_ARGS);
+    }
+
+    /*  initialize also timestamp (receiver-side only) and metadata  */
+    c->videoFrame.timestamp = 0;
+    c->videoFrame.p_metadata = NULL;
 
     c->status = napi_get_named_property(env, config, "frameFormatType", &param);
     REJECT_RETURN;
@@ -581,10 +601,28 @@ napi_value audioSend(napi_env env, napi_callback_info info) {
     c->status = napi_get_value_int32(env, param, &c->audioFrame.no_samples);
     REJECT_RETURN;
 
-    // TODO: timecode
-    // TODO: timestamp
     c->audioFrame.timecode = NDIlib_send_timecode_synthesize;
+    c->status = napi_get_named_property(env, config, "timecode", &param);
+    REJECT_RETURN;
+    c->status = napi_typeof(env, param, &type);
+    REJECT_RETURN;
+    if (type != napi_undefined) {
+        if (type == napi_number) {
+            c->status = napi_get_value_int64(env, param, &c->audioFrame.timecode);
+            REJECT_RETURN;
+        }
+        else if (type == napi_bigint) {
+            bool lossless;
+            c->status = napi_get_value_bigint_int64(env, param, &c->audioFrame.timecode, &lossless);
+            REJECT_RETURN;
+        }
+        else
+            REJECT_ERROR_RETURN("timecode value must be a number or bigint", GRANDIOSE_INVALID_ARGS);
+    }
+
+    /*  initialize also timestamp (receiver-side only) and metadata  */
     c->audioFrame.timestamp = 0;
+    c->audioFrame.p_metadata = NULL;
 
     c->status = napi_get_named_property(env, config, "channelStrideBytes", &param);
     REJECT_RETURN;
