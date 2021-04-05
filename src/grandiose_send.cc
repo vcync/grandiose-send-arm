@@ -29,6 +29,7 @@
 
 napi_value videoSend(napi_env env, napi_callback_info info);
 napi_value audioSend(napi_env env, napi_callback_info info);
+napi_value connections(napi_env env, napi_callback_info info);
 
 void sendExecute(napi_env env, void* data) {
   sendCarrier* c = (sendCarrier *) data;
@@ -162,6 +163,13 @@ void sendComplete(napi_env env, napi_status asyncStatus, void* data) {
     nullptr, &audioFn);
   REJECT_STATUS;
   c->status = napi_set_named_property(env, result, "audio", audioFn);
+  REJECT_STATUS;
+
+  napi_value connectionsFn;
+  c->status = napi_create_function(env, "connections", NAPI_AUTO_LENGTH, connections,
+    nullptr, &connectionsFn);
+  REJECT_STATUS;
+  c->status = napi_set_named_property(env, result, "connections", connectionsFn);
   REJECT_STATUS;
 
   // napi_value metadataFn;
@@ -676,5 +684,30 @@ napi_value audioSend(napi_env env, napi_callback_info info) {
   REJECT_RETURN;
 
   return promise;
+}
+
+napi_value connections(napi_env env, napi_callback_info info) {
+  napi_status status;
+
+  size_t argc = 1;
+  napi_value args[1];
+  napi_value thisValue;
+  status = napi_get_cb_info(env, info, &argc, args, &thisValue, nullptr);
+  CHECK_STATUS;
+
+  napi_value sendValue;
+  status = napi_get_named_property(env, thisValue, "embedded", &sendValue);
+  CHECK_STATUS;
+  void *sendData;
+  status = napi_get_value_external(env, sendValue, &sendData);
+  CHECK_STATUS;
+  NDIlib_send_instance_t sender = (NDIlib_send_instance_t)sendData;
+
+  int conns = NDIlib_send_get_no_connections(sender, 0);
+  napi_value result;
+  status = napi_create_int32(env, (int32_t)conns, &result);
+  CHECK_STATUS;
+
+  return result;
 }
 
