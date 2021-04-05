@@ -85,7 +85,7 @@ napi_value Init(napi_env env, napi_value exports) {
     DECLARE_NAPI_METHOD("send", send),
     DECLARE_NAPI_METHOD("receive", receive)
    };
-  status = napi_define_properties(env, exports, 5, desc);
+  status = napi_define_properties(env, exports, sizeof(desc) / sizeof(desc[0]), desc);
   CHECK_STATUS;
 
   return exports;
