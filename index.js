@@ -81,8 +81,10 @@ let find = function (...args) {
 
 module.exports = {
   version: addon.version,
-  find: find,
   isSupportedCPU: addon.isSupportedCPU,
+  initialize: addon.initialize,
+  destroy: addon.destroy,
+  find: find,
   receive: addon.receive,
   send: addon.send,
   COLOR_FORMAT_BGRX_BGRA, COLOR_FORMAT_UYVY_BGRA,

@@ -52,12 +52,36 @@ napi_value isSupportedCPU(napi_env env, napi_callback_info info) {
   return result;
 }
 
+napi_value initialize(napi_env env, napi_callback_info info) {
+  napi_status status;
+
+  bool ok = NDIlib_initialize();
+  napi_value result;
+  status = napi_get_boolean(env, ok, &result);
+  CHECK_STATUS;
+
+  return result;
+}
+
+napi_value destroy(napi_env env, napi_callback_info info) {
+  napi_status status;
+
+  NDIlib_destroy();
+  napi_value result;
+  status = napi_get_boolean(env, true, &result);
+  CHECK_STATUS;
+
+  return result;
+}
+
 napi_value Init(napi_env env, napi_value exports) {
   napi_status status;
   napi_property_descriptor desc[] = {
     DECLARE_NAPI_METHOD("version", version),
-    DECLARE_NAPI_METHOD("find", find),
     DECLARE_NAPI_METHOD("isSupportedCPU", isSupportedCPU),
+    DECLARE_NAPI_METHOD("initialize", initialize),
+    DECLARE_NAPI_METHOD("destroy", destroy),
+    DECLARE_NAPI_METHOD("find", find),
     DECLARE_NAPI_METHOD("send", send),
     DECLARE_NAPI_METHOD("receive", receive)
    };
