@@ -30,6 +30,7 @@
 napi_value videoSend(napi_env env, napi_callback_info info);
 napi_value audioSend(napi_env env, napi_callback_info info);
 napi_value connections(napi_env env, napi_callback_info info);
+napi_value tally(napi_env env, napi_callback_info info);
 
 void sendExecute(napi_env env, void* data) {
   sendCarrier* c = (sendCarrier *) data;
@@ -170,6 +171,13 @@ void sendComplete(napi_env env, napi_status asyncStatus, void* data) {
     nullptr, &connectionsFn);
   REJECT_STATUS;
   c->status = napi_set_named_property(env, result, "connections", connectionsFn);
+  REJECT_STATUS;
+
+  napi_value tallyFn;
+  c->status = napi_create_function(env, "connections", NAPI_AUTO_LENGTH, tally,
+    nullptr, &tallyFn);
+  REJECT_STATUS;
+  c->status = napi_set_named_property(env, result, "tally", tallyFn);
   REJECT_STATUS;
 
   // napi_value metadataFn;
@@ -706,6 +714,44 @@ napi_value connections(napi_env env, napi_callback_info info) {
   int conns = NDIlib_send_get_no_connections(sender, 0);
   napi_value result;
   status = napi_create_int32(env, (int32_t)conns, &result);
+  CHECK_STATUS;
+
+  return result;
+}
+
+napi_value tally(napi_env env, napi_callback_info info) {
+  napi_status status;
+
+  size_t argc = 1;
+  napi_value args[1];
+  napi_value thisValue;
+  status = napi_get_cb_info(env, info, &argc, args, &thisValue, nullptr);
+  CHECK_STATUS;
+
+  napi_value sendValue;
+  status = napi_get_named_property(env, thisValue, "embedded", &sendValue);
+  CHECK_STATUS;
+  void *sendData;
+  status = napi_get_value_external(env, sendValue, &sendData);
+  CHECK_STATUS;
+  NDIlib_send_instance_t sender = (NDIlib_send_instance_t)sendData;
+
+  NDIlib_tally_t tally;
+  bool changed = NDIlib_send_get_tally(sender, &tally, 0);
+
+  napi_value result;
+  status = napi_create_object(env, &result);
+  CHECK_STATUS;
+
+  napi_value value;
+  napi_get_boolean(env, changed, &value);
+  status = napi_set_named_property(env, result, "changed", value);
+  CHECK_STATUS;
+  napi_get_boolean(env, tally.on_program, &value);
+  status = napi_set_named_property(env, result, "on_program", value);
+  CHECK_STATUS;
+  napi_get_boolean(env, tally.on_preview, &value);
+  status = napi_set_named_property(env, result, "on_preview", value);
   CHECK_STATUS;
 
   return result;
