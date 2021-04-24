@@ -13,11 +13,12 @@
   limitations under the License.
 */
 
-const addon = require('bindings')('grandiose');
+const path = require("path")
 
-// TODO: reenable segfault-handler when the NDI lib is fixed
-// const SegfaultHandler = require('segfault-handler');
-// SegfaultHandler.registerHandler("crash.log"); // With no argument, SegfaultHandler will generate a generic log file name
+const addon = require('bindings')({
+  bindings: "grandiose",
+  module_root: path.resolve(__dirname)
+});
 
 const COLOR_FORMAT_BGRX_BGRA = 0; // No alpha channel: BGRX, Alpha channel: BGRA
 const COLOR_FORMAT_UYVY_BGRA = 1; // No alpha channel: UYVY, Alpha channel: BGRA
