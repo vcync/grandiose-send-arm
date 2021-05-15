@@ -31,6 +31,7 @@ napi_value videoSend(napi_env env, napi_callback_info info);
 napi_value audioSend(napi_env env, napi_callback_info info);
 napi_value connections(napi_env env, napi_callback_info info);
 napi_value tally(napi_env env, napi_callback_info info);
+napi_value sourcename(napi_env env, napi_callback_info info);
 
 void sendExecute(napi_env env, void* data) {
   sendCarrier* c = (sendCarrier *) data;
@@ -178,6 +179,13 @@ void sendComplete(napi_env env, napi_status asyncStatus, void* data) {
     nullptr, &tallyFn);
   REJECT_STATUS;
   c->status = napi_set_named_property(env, result, "tally", tallyFn);
+  REJECT_STATUS;
+
+  napi_value sourcenameFn;
+  c->status = napi_create_function(env, "sourcename", NAPI_AUTO_LENGTH, sourcename,
+    nullptr, &sourcenameFn);
+  REJECT_STATUS;
+  c->status = napi_set_named_property(env, result, "sourcename", sourcenameFn);
   REJECT_STATUS;
 
   // napi_value metadataFn;
@@ -752,6 +760,31 @@ napi_value tally(napi_env env, napi_callback_info info) {
   CHECK_STATUS;
   napi_get_boolean(env, tally.on_preview, &value);
   status = napi_set_named_property(env, result, "on_preview", value);
+  CHECK_STATUS;
+
+  return result;
+}
+
+napi_value sourcename(napi_env env, napi_callback_info info) {
+  napi_status status;
+
+  size_t argc = 1;
+  napi_value args[1];
+  napi_value thisValue;
+  status = napi_get_cb_info(env, info, &argc, args, &thisValue, nullptr);
+  CHECK_STATUS;
+
+  napi_value sendValue;
+  status = napi_get_named_property(env, thisValue, "embedded", &sendValue);
+  CHECK_STATUS;
+  void *sendData;
+  status = napi_get_value_external(env, sendValue, &sendData);
+  CHECK_STATUS;
+  NDIlib_send_instance_t sender = (NDIlib_send_instance_t)sendData;
+
+  const NDIlib_source_t *source = NDIlib_send_get_source_name(sender);
+  napi_value result;
+  status = napi_create_string_utf8(env, source->p_ndi_name, NAPI_AUTO_LENGTH, &result);
   CHECK_STATUS;
 
   return result;
