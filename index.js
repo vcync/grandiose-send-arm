@@ -88,6 +88,7 @@ module.exports = {
   find: find,
   receive: addon.receive,
   send: addon.send,
+  routing: addon.routing,
   COLOR_FORMAT_BGRX_BGRA, COLOR_FORMAT_UYVY_BGRA,
   COLOR_FORMAT_RGBX_RGBA, COLOR_FORMAT_UYVY_RGBA,
   COLOR_FORMAT_BGRX_BGRA_FLIPPED, COLOR_FORMAT_FASTEST,

@@ -130,3 +130,25 @@ await sender.send({
 
 sender.destroy();
 
+# routing
+
+let routing = await grandiose.routing(<args>);
+
+<args> is {
+  name: <string>,
+  [groups: <string>]
+}
+
+<routing> is {
+  name: <string>,
+  [groups: <string>],
+  embedded: <native<NDIlib_routing_instance_t>>
+}
+
+<int>    = routing.change(<source>);
+<bool>   = routing.clear();
+<int>    = routing.connections();
+<string> = routing.sourcename();
+
+await routing.destroy();
+

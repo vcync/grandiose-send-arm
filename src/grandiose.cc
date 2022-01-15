@@ -29,6 +29,7 @@
 #include "grandiose_find.h"
 #include "grandiose_send.h"
 #include "grandiose_receive.h"
+#include "grandiose_routing.h"
 #include "node_api.h"
 
 napi_value version(napi_env env, napi_callback_info info) {
@@ -83,7 +84,8 @@ napi_value Init(napi_env env, napi_value exports) {
     DECLARE_NAPI_METHOD("destroy", destroy),
     DECLARE_NAPI_METHOD("find", find),
     DECLARE_NAPI_METHOD("send", send),
-    DECLARE_NAPI_METHOD("receive", receive)
+    DECLARE_NAPI_METHOD("receive", receive),
+    DECLARE_NAPI_METHOD("routing", routing)
    };
   status = napi_define_properties(env, exports, sizeof(desc) / sizeof(desc[0]), desc);
   CHECK_STATUS;

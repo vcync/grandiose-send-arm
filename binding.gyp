@@ -9,6 +9,7 @@
             "src/grandiose_find.cc",
             "src/grandiose_send.cc",
             "src/grandiose_receive.cc",
+            "src/grandiose_routing.cc",
             "src/grandiose.cc"
         ],
         "include_dirs": [ "ndi/include" ],

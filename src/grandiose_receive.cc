@@ -200,7 +200,6 @@ napi_value receive(napi_env env, napi_callback_info info) {
   REJECT_RETURN;
   c->status = napi_typeof(env, checkType, &type);
   REJECT_RETURN;
-  
   if (type != napi_undefined && type != napi_string) REJECT_ERROR_RETURN(
     "Source 'urlAddress' sub-property must be of type string.",
     GRANDIOSE_INVALID_ARGS);
