@@ -52,6 +52,17 @@ export interface Sender {
   clockAudio: boolean
 }
 
+export interface Routing {
+  embedded: unknown
+  destroy: () => Promise<void>
+  video: (frame: VideoFrame) => Promise<void>
+  audio: (frame: AudioFrame) => Promise<void>
+  name: string
+  groups?: string | string[]
+  clockVideo: boolean
+  clockAudio: boolean
+}
+
 export interface Source {
   name: string
   urlAddress?: string
@@ -100,6 +111,12 @@ export const enum Bandwidth {
   Highest = 100
 }
 
+export function find(params: {
+  showLocalSources?: boolean
+  groups?: string | string[]
+  extraIPs?: string | string[]
+}): Promise<Source[]>
+
 export function receive(params: {
   source: Source
   colorFormat?: ColorFormat
@@ -114,3 +131,9 @@ export function send(params: {
   clockVideo?: boolean
   clockAudio?: boolean
 }): Sender
+
+export function routing(params: {
+  name: string
+  groups?: string | string[]
+}): Routing
+
