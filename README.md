@@ -20,6 +20,7 @@ The differences against the original codebase are:
 - portability fixes for macOS from the [danjenkins/grandiose](https://github.com/danjenkins/grandiose) fork.
 - NDI Sender functionality from the [ianshade/grandiose](https://github.com/ianshade/grandiose) fork.
 - TypeScript type definitions from the [ianshade/grandiose](https://github.com/ianshade/grandiose) fork.
+- NDI Routing functionality from scratch.
 
 ## Installation
 
