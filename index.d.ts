@@ -53,14 +53,14 @@ export interface Sender {
 }
 
 export interface Routing {
+  name: string
+  groups?: string
   embedded: unknown
   destroy: () => Promise<void>
-  video: (frame: VideoFrame) => Promise<void>
-  audio: (frame: AudioFrame) => Promise<void>
-  name: string
-  groups?: string | string[]
-  clockVideo: boolean
-  clockAudio: boolean
+  change: (Source) => number
+  clear: () => boolean
+  connections: () => number
+  sourcename: () => string
 }
 
 export interface Source {
