@@ -207,7 +207,7 @@ napi_value routing(napi_env env, napi_callback_info info) {
         c->status = napi_get_value_string_utf8(env, groups, nullptr, 0, &groupsl);
         REJECT_RETURN;
         c->groups = (char *)malloc(groupsl + 1);
-        c->status = napi_get_value_string_utf8(env, name, c->groups, groupsl + 1, &groupsl);
+        c->status = napi_get_value_string_utf8(env, groups, c->groups, groupsl + 1, &groupsl);
         REJECT_RETURN;
     }
    
