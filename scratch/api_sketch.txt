@@ -2,16 +2,26 @@ const grandiose = require('grandiose');
 
 # Find
 
-let sources = await grandiose.find(<args>, <max_wait>);
+let finder = await grandiose.find(<args>);
 
 <args> is {
   showLocalSources: <boolean>,
-  groups: <string> or <array<string>>,
-  extraIPs: <string> or <array<string>>
+  groups: <string>,
+  extraIPs: <string>
 }
+
+<finder> is {
+  embedded: <native<NDIlib_routing_instance_t>>
+}
+
+<sources> = finder.sources(<max_wait>);
+<int>     = finder.wait();
+
+await finder.destroy();
+
 <max_wait> is number of milliseconds to wait before failing
 
-sources is an <array<source>> where source is {
+<sources> is an <array<source>> where <source> is {
   name: <string>,
   urlAddress: <string>,
   embedded: <native<NDIlib_source_t>>

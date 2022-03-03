@@ -16,7 +16,8 @@
 const g = require('../index.js');
 
 async function run() {
-  let l = await g.find();
+  let f = await g.find({});
+  let l = f.sources();
   console.log('>>> FOUND >>>', l);
   let r = await g.receive({ source: l[0] });
   console.log('>>> RECEIVER >>>', r);

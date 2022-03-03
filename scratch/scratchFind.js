@@ -16,17 +16,11 @@
 const g = require('../index.js');
 
 ;(async () => {
-    const f = await g.find({})
-    const sources = f.sources()
-    console.log(sources[0])
-
-    const r = await g.routing({ name: "ROUTER-1" })
-    console.log(r.connections())
-    console.log(r.sourcename())
-    console.log(r.change(sources[0]))
+    const finder = await g.find({ showLocalSources: true })
     setInterval(() => {
-        console.log(r.connections())
+        const sources = finder.sources()
+        console.log(sources)
+        finder.wait()
     }, 1000)
-    // r.destroy()
 })()
 
