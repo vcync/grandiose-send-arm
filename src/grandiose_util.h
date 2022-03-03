@@ -63,6 +63,7 @@ napi_status checkArgs(napi_env env, napi_callback_info info, char* methodName,
 #define GRANDIOSE_RECEIVE_CREATE_FAIL 4101
 #define GRANDIOSE_SEND_CREATE_FAIL 4102
 #define GRANDIOSE_ROUTING_CREATE_FAIL 4103
+#define GRANDIOSE_FIND_CREATE_FAIL 4104
 #define GRANDIOSE_NOT_FOUND 4040
 #define GRANDIOSE_NOT_VIDEO 4140
 #define GRANDIOSE_NOT_AUDIO 4141
@@ -113,5 +114,7 @@ bool validColorFormat(NDIlib_recv_color_format_e format);
 bool validBandwidth(NDIlib_recv_bandwidth_e bandwidth);
 bool validFrameFormat(NDIlib_frame_format_type_e format);
 bool validAudioFormat(Grandiose_audio_format_e format);
+
+napi_status makeNativeSource(napi_env env, napi_value source, NDIlib_source_t *result);
 
 #endif // GRANDIOSE_UTIL_H
